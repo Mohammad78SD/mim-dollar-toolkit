@@ -1,0 +1,20 @@
+# dependencies and build output
+/vendor/
+/dist/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# local design notes (kept on disk, not published)
+/SPEC*.md
+
+# dev environment runtime files
+/dev/*.log
+/dev/.env
+/dev/wordpress/
+
+# phpunit
+.phpunit.result.cache
+/.phpunit.cache/
