@@ -1,6 +1,6 @@
 <?php
 /**
- * Backward-compatibility shims for the legacy "Azadkhani Toolkit" plugin (prefix azk_).
+ * Backward-compatibility shims for the earlier internal toolkit plugin (prefix azk_).
  *
  * All compat code lives in this single file so it can be deleted once old links/shortcodes are gone:
  *  - the old shortcode [azk_usd_rate] keeps working as an alias of [wtt_usd_rate];

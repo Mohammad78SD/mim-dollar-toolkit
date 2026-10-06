@@ -1,6 +1,6 @@
 <?php
 /**
- * One-time data migration from the legacy "Azadkhani Toolkit" plugin (azadkhani-toolkit, prefix azk_ / AZK_).
+ * One-time data migration from the earlier internal toolkit plugin (slug azadkhani-toolkit, prefix azk_ / AZK_).
  *
  * This file intentionally references the OLD names. It copies options, renames meta keys, order statuses and
  * payment methods, drops old schedules, and deactivates the old plugin. It is idempotent and guarded by the
