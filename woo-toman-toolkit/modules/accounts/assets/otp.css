@@ -1,0 +1,14 @@
+.wtt-acc-otp{max-width:420px;margin:0 0 1.5em;padding:1.2em 1.4em;border:1px solid rgba(0,0,0,.15);border-radius:6px}
+.wtt-acc-otp[hidden],.wtt-acc-step[hidden],.wtt-acc-pw-toggle-wrap[hidden]{display:none}
+.wtt-acc-otp h2{margin-top:0}
+.wtt-acc-otp input[type=tel],.wtt-acc-otp input[type=text]{width:100%;box-sizing:border-box;text-align:left;direction:ltr}
+.wtt-acc-otp input[type=text]{letter-spacing:.3em;font-size:1.2em}
+.wtt-acc-msg{min-height:1.4em;margin:.4em 0}
+.wtt-acc-msg.is-error{color:#b32d2e}
+.wtt-acc-msg.is-ok{color:#1a7f37}
+.wtt-acc-link{background:none;border:0;padding:0;margin-inline-end:1em;color:inherit;text-decoration:underline;cursor:pointer;font:inherit}
+.wtt-acc-link[disabled]{opacity:.55;cursor:default;text-decoration:none}
+.wtt-acc-hide-pw{display:none!important}
+.wtt-acc-pw-toggle-wrap{margin:0 0 1em}
+.wtt-acc-otp .wtt-acc-send,.wtt-acc-otp .wtt-acc-verify{min-height:44px;width:100%;box-sizing:border-box;cursor:pointer}
+.wtt-acc-otp .wtt-acc-send[disabled],.wtt-acc-otp .wtt-acc-verify[disabled]{opacity:.6;cursor:default}
