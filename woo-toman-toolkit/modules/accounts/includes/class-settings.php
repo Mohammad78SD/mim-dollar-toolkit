@@ -47,7 +47,7 @@ class WTT_ACC_Settings {
 	 */
 	public static function clean_header_name( $name ) {
 		$name = is_string( $name ) ? trim( $name ) : '';
-		return preg_match( '/^[A-Za-z0-9-]{1,64}$/', $name ) ? $name : '';
+		return preg_match( '/^[A-Za-z0-9-]{1,64}$/D', $name ) ? $name : '';
 	}
 
 	/**

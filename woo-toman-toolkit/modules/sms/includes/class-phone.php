@@ -113,7 +113,7 @@ class WTT_SMS_Phone {
 	 * @return bool
 	 */
 	public static function is_valid_mobile( $e164 ) {
-		return 1 === preg_match( '/^\+989\d{9}$/', (string) $e164 );
+		return 1 === preg_match( '/^\+989\d{9}$/D', (string) $e164 );
 	}
 
 	/**
