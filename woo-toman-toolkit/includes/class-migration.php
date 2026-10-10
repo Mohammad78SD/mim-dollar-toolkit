@@ -1,6 +1,6 @@
 <?php
 /**
- * One-time data migration from the earlier internal toolkit plugin (slug azadkhani-toolkit, prefix azk_ / AZK_).
+ * One-time data migration from the earlier internal toolkit plugin (azk_ / AZK_ prefix).
  *
  * This file intentionally references the OLD names. It copies options, renames meta keys, order statuses and
  * payment methods, drops old schedules, and deactivates the old plugin. It is idempotent and guarded by the
@@ -21,7 +21,8 @@ class WTT_Migration {
 	const OPTION_NOTICE  = 'wtt_migration_notice';
 	const LOCK_TTL       = 300;
 
-	const OLD_PLUGIN = 'azadkhani-toolkit/azadkhani-toolkit.php';
+	/** Marker the old plugin's main file defines; used to recognise it without hard-coding its slug. */
+	const OLD_MARKER = 'AZK_TK_FILE';
 
 	/** @var string[] Log lines collected during a run. */
 	private static $report = array();
@@ -74,15 +75,42 @@ class WTT_Migration {
 	}
 
 	private static function old_plugin_active() {
+		return '' !== self::find_old_plugin();
+	}
+
+	/**
+	 * Basename (dir/file.php) of the active old plugin, or '' when it is not active.
+	 * Uses the marker constant when the old plugin is already loaded, otherwise scans active plugin headers.
+	 *
+	 * @return string
+	 */
+	private static function find_old_plugin() {
 		$active = (array) get_option( 'active_plugins', array() );
-		if ( in_array( self::OLD_PLUGIN, $active, true ) ) {
-			return true;
-		}
 		if ( is_multisite() ) {
-			$network = (array) get_site_option( 'active_sitewide_plugins', array() );
-			return isset( $network[ self::OLD_PLUGIN ] );
+			$active = array_merge( $active, array_keys( (array) get_site_option( 'active_sitewide_plugins', array() ) ) );
 		}
-		return false;
+		if ( defined( self::OLD_MARKER ) ) {
+			$basename = plugin_basename( constant( self::OLD_MARKER ) );
+			if ( in_array( $basename, $active, true ) ) {
+				return $basename;
+			}
+		}
+		$own = plugin_basename( WTT_TK_FILE );
+		foreach ( $active as $plugin ) {
+			$plugin = (string) $plugin;
+			if ( $plugin === $own || '.php' !== substr( $plugin, -4 ) ) {
+				continue;
+			}
+			$path = WP_PLUGIN_DIR . '/' . $plugin;
+			if ( ! is_readable( $path ) ) {
+				continue;
+			}
+			$head = file_get_contents( $path, false, null, 0, 8192 ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+			if ( false !== $head && 1 === preg_match( '/define\s*\(\s*[\'"]' . preg_quote( self::OLD_MARKER, '/' ) . '[\'"]/', $head ) ) {
+				return $plugin;
+			}
+		}
+		return '';
 	}
 
 	/**
@@ -168,13 +196,14 @@ class WTT_Migration {
 	 * @return bool Whether the old plugin was active.
 	 */
 	private static function deactivate_old_plugin() {
-		if ( ! self::old_plugin_active() ) {
+		$old = self::find_old_plugin();
+		if ( '' === $old ) {
 			return false;
 		}
 		if ( ! function_exists( 'deactivate_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
-		deactivate_plugins( self::OLD_PLUGIN, true, is_multisite() && is_plugin_active_for_network( self::OLD_PLUGIN ) );
+		deactivate_plugins( $old, true, is_multisite() && is_plugin_active_for_network( $old ) );
 		self::log( 'info', __( 'The old plugin was deactivated; it has been replaced by this plugin and can be deleted.', 'woo-toman-toolkit' ) );
 		return true;
 	}
