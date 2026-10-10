@@ -92,6 +92,7 @@ function wp_remote_retrieve_body( $r ) { return isset( $r['body'] ) ? $r['body']
 require_once MDT_TK_DIR . 'includes/helpers-jalali.php';
 require_once MDT_TK_DIR . 'includes/helpers-fa.php';
 require_once MDT_TK_DIR . 'includes/class-logger.php';
+require_once MDT_TK_DIR . 'includes/class-migration.php';
 require_once MDT_TK_DIR . 'modules/usd-pricing/includes/class-logger.php';
 require_once MDT_TK_DIR . 'modules/usd-pricing/includes/class-settings.php';
 require_once MDT_TK_DIR . 'modules/usd-pricing/includes/class-rate-manager.php';
