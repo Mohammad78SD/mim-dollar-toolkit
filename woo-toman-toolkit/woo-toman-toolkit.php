@@ -11,7 +11,7 @@
  * Text Domain:       woo-toman-toolkit
  * Domain Path:       /languages
  * WC requires at least: 7.0
- * WC tested up to:   9.5
+ * WC tested up to:   11.1
  * License:           MIT
  * License URI:       https://opensource.org/licenses/MIT
  *

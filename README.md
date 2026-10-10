@@ -91,7 +91,7 @@ Key decisions:
 
 - PHP 7.4 or newer
 - WordPress 6.0 or newer
-- WooCommerce 7.0 or newer (the plugin header declares tested up to 9.5; the dev environment installs the current WooCommerce release)
+- WooCommerce 7.0 or newer (the plugin header declares tested up to 11.1; the dev environment installs the current WooCommerce release)
 - For SMS and OTP: a FarazSMS (IranPayamak) account with pattern templates
 
 ## Install
