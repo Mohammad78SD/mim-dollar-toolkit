@@ -1,5 +1,5 @@
 <?php
-class PhoneTest extends WTT_TestCase {
+class PhoneTest extends MDT_TestCase {
 
 	public function validMobileProvider() {
 		$e = '+989123456789';
@@ -22,9 +22,9 @@ class PhoneTest extends WTT_TestCase {
 
 	/** @dataProvider validMobileProvider */
 	public function test_normalize_valid( $raw, $expected ) {
-		$n = WTT_SMS_Phone::normalize( $raw );
+		$n = MDT_SMS_Phone::normalize( $raw );
 		$this->assertSame( $expected, $n );
-		$this->assertTrue( WTT_SMS_Phone::is_valid_mobile( $n ) );
+		$this->assertTrue( MDT_SMS_Phone::is_valid_mobile( $n ) );
 	}
 
 	public function invalidProvider() {
@@ -43,43 +43,43 @@ class PhoneTest extends WTT_TestCase {
 
 	/** @dataProvider invalidProvider */
 	public function test_invalid_numbers_are_rejected( $raw ) {
-		$this->assertFalse( WTT_SMS_Phone::is_valid_mobile( WTT_SMS_Phone::normalize( $raw ) ) );
+		$this->assertFalse( MDT_SMS_Phone::is_valid_mobile( MDT_SMS_Phone::normalize( $raw ) ) );
 	}
 
 	public function test_is_valid_mobile_is_strict() {
-		$this->assertTrue( WTT_SMS_Phone::is_valid_mobile( '+989000000000' ) );
-		$this->assertFalse( WTT_SMS_Phone::is_valid_mobile( '09123456789' ), 'only E.164 is accepted' );
-		$this->assertFalse( WTT_SMS_Phone::is_valid_mobile( '+98912345678' ) );
-		$this->assertFalse( WTT_SMS_Phone::is_valid_mobile( '+9891234567890' ) );
-		$this->assertFalse( WTT_SMS_Phone::is_valid_mobile( "+989123456789\n" ), 'no trailing newline' );
+		$this->assertTrue( MDT_SMS_Phone::is_valid_mobile( '+989000000000' ) );
+		$this->assertFalse( MDT_SMS_Phone::is_valid_mobile( '09123456789' ), 'only E.164 is accepted' );
+		$this->assertFalse( MDT_SMS_Phone::is_valid_mobile( '+98912345678' ) );
+		$this->assertFalse( MDT_SMS_Phone::is_valid_mobile( '+9891234567890' ) );
+		$this->assertFalse( MDT_SMS_Phone::is_valid_mobile( "+989123456789\n" ), 'no trailing newline' );
 	}
 
 	public function test_local_and_mask() {
-		$this->assertSame( '09123456789', WTT_SMS_Phone::local( '+989123456789' ) );
-		$this->assertSame( '+441234567890', WTT_SMS_Phone::local( '+441234567890' ) );
-		$this->assertSame( '0912***6789', WTT_SMS_Phone::mask( '+989123456789' ) );
-		$this->assertSame( '0912***6789', WTT_SMS_Phone::mask( '۰۹۱۲۳۴۵۶۷۸۹' ) );
-		$this->assertSame( '***', WTT_SMS_Phone::mask( '123' ) );
+		$this->assertSame( '09123456789', MDT_SMS_Phone::local( '+989123456789' ) );
+		$this->assertSame( '+441234567890', MDT_SMS_Phone::local( '+441234567890' ) );
+		$this->assertSame( '0912***6789', MDT_SMS_Phone::mask( '+989123456789' ) );
+		$this->assertSame( '0912***6789', MDT_SMS_Phone::mask( '۰۹۱۲۳۴۵۶۷۸۹' ) );
+		$this->assertSame( '***', MDT_SMS_Phone::mask( '123' ) );
 	}
 
 	public function test_latin_digits_only_changes_digits_and_marks() {
-		$this->assertSame( '09123456789', WTT_SMS_Phone::latin_digits( '۰۹۱۲۳۴۵۶۷۸۹' ) );
-		$this->assertSame( '0912 345', WTT_SMS_Phone::latin_digits( "٠٩١٢ ٣٤٥" ), 'spaces are kept' );
-		$this->assertSame( 'ab12', WTT_SMS_Phone::latin_digits( "ab\u{200C}۱۲" ) );
+		$this->assertSame( '09123456789', MDT_SMS_Phone::latin_digits( '۰۹۱۲۳۴۵۶۷۸۹' ) );
+		$this->assertSame( '0912 345', MDT_SMS_Phone::latin_digits( "٠٩١٢ ٣٤٥" ), 'spaces are kept' );
+		$this->assertSame( 'ab12', MDT_SMS_Phone::latin_digits( "ab\u{200C}۱۲" ) );
 	}
 
 	public function test_parse_list_dedupes_and_counts_invalid() {
 		$invalid = 0;
-		$list    = WTT_SMS_Phone::parse_list( "09123456789, +989123456789\n۰۹۳۵۱۲۳۴۵۶۷;12345،0912", $invalid );
+		$list    = MDT_SMS_Phone::parse_list( "09123456789, +989123456789\n۰۹۳۵۱۲۳۴۵۶۷;12345،0912", $invalid );
 		$this->assertSame( array( '+989123456789', '+989351234567' ), $list );
 		$this->assertSame( 2, $invalid );
-		$this->assertSame( array(), WTT_SMS_Phone::parse_list( '', $invalid ) );
+		$this->assertSame( array(), MDT_SMS_Phone::parse_list( '', $invalid ) );
 		$this->assertSame( 0, $invalid );
 	}
 
 	public function test_known_gap_plus98_followed_by_trunk_zero_is_rejected() {
 		// "+98 0912..." (country code plus the domestic leading 0) is a common typing mistake.
 		// It is rejected rather than guessed; this test documents the current behaviour.
-		$this->assertFalse( WTT_SMS_Phone::is_valid_mobile( WTT_SMS_Phone::normalize( '+98 0912 345 6789' ) ) );
+		$this->assertFalse( MDT_SMS_Phone::is_valid_mobile( MDT_SMS_Phone::normalize( '+98 0912 345 6789' ) ) );
 	}
 }

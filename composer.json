@@ -1,6 +1,6 @@
 {
-    "name": "mohammad78sd/woo-toman-toolkit",
-    "description": "Toman Toolkit for WooCommerce (development tooling only; the plugin itself has no Composer dependencies).",
+    "name": "mimscript/mim-dollar-toolkit",
+    "description": "MiM Dollar Toolkit (development tooling only; the plugin itself has no Composer dependencies).",
     "type": "project",
     "license": "MIT",
     "require-dev": {

@@ -1,14 +1,16 @@
-# Toman Toolkit for WooCommerce
+# MiM Dollar Toolkit
+
+By [MiM Script](https://mimscript.com).
 
 A WooCommerce plugin for Iranian stores: USD-based Toman pricing, a pre-invoice checkout instead of online payment, SMS notifications and mobile-number (OTP) login, in one modular plugin.
 
-> Built for, and running in production on, an Iranian carpet retailer's WooCommerce store. Sole developer: Mohammad Sabet Daryani.
+> Built for, and running in production on, an Iranian carpet retailer's WooCommerce store. Developed by Mohammad Sabet Daryani at MiM Script.
 
 <!-- TODO: screenshots (demo data) -->
 
 ## Modules
 
-Each module can be switched on or off from **WooCommerce > Toman Toolkit**. All four modules are on by default.
+Each module can be switched on or off from **WooCommerce > MiM Dollar Toolkit**. All four modules are on by default.
 
 ### USD pricing
 
@@ -20,7 +22,7 @@ Enter product prices in USD; the plugin keeps the Toman prices up to date.
 - Prices are recalculated in **batches through Action Scheduler**, so a large catalogue does not time out. Only products whose price actually changes are saved.
 - Works with simple products and variations (sale prices and sale schedules keep working), and for stores whose currency is Toman (IRT) or Rial (IRR).
 - After a sync it purges the common page caches (LiteSpeed, WP Rocket, W3 Total Cache, WP Super Cache, WP Fastest Cache, SG Optimizer).
-- Shortcode `[wtt_usd_rate]` prints the current rate.
+- Shortcode `[mdt_usd_rate]` prints the current rate.
 
 ### Pre-invoice checkout
 
@@ -54,8 +56,8 @@ The target store runs on shared hosting with **no SSH and no WP-CLI**, so everyt
 ## Architecture
 
 ```
-woo-toman-toolkit/
-  woo-toman-toolkit.php      bootstrap, HPOS declaration, WooCommerce check
+mim-dollar-toolkit/
+  mim-dollar-toolkit.php      bootstrap, HPOS declaration, WooCommerce check
   includes/                  module registry and base class, admin screen, logger,
                              Jalali and Persian helpers, migration and legacy shims
   modules/
@@ -75,7 +77,7 @@ Key decisions:
 - **HPOS compatible.** The plugin declares compatibility with custom order tables and registers its order-list hooks for both storage layouts.
 - **Classic and block checkout.** The pre-invoice payment method has a small JavaScript integration for the block checkout (no build step), and the usual gateway for the classic one.
 - **No secrets in logs.** Logs go to a capped ring buffer per module; phone numbers are masked and OTP codes are never logged.
-- **Migration from an earlier internal version.** The first version of this code used an `azk_` prefix. `includes/class-migration.php` is a one-time, idempotent migration: it copies options, renames post, user, order and HPOS meta keys, order statuses and payment methods, removes old schedules, and deactivates the old plugin. `includes/class-legacy.php` keeps old shortcodes and already-emailed pre-invoice links working. Both files intentionally mention the old names and can be deleted once nothing depends on them.
+- **Upgrading from earlier internal versions.** This code was previously used internally under two other names and prefixes (`azk_`, then `wtt_`). `includes/class-migration.php` is a one-time, idempotent migration that handles either or both being present on a site: it copies options (the newer version's values win), renames post, user, order and HPOS meta keys, order statuses and payment methods, removes old schedules, and deactivates the old plugin. A "Remove legacy data" button then deletes the leftover old options. `includes/class-legacy.php` keeps the old shortcodes (`[azk_usd_rate]`, `[wtt_usd_rate]`) and already-emailed pre-invoice links (`?azk-pi=`, `?wtt-pi=`) working. Both files intentionally mention the old names and can be deleted once nothing depends on them. Fresh installs are unaffected.
 
 ## Security notes (OTP)
 
@@ -96,9 +98,9 @@ Key decisions:
 
 ## Install
 
-1. Build or download the zip. To build: `./build.sh` creates `dist/woo-toman-toolkit.zip` (the plugin folder only; tests, dev files and Composer files are not included).
+1. Build or download the zip. To build: `./build.sh` creates `dist/mim-dollar-toolkit.zip` (the plugin folder only; tests, dev files and Composer files are not included).
 2. In wp-admin: Plugins > Add New > Upload Plugin, choose the zip, activate.
-3. Open **WooCommerce > Toman Toolkit** to enable modules and configure each one.
+3. Open **WooCommerce > MiM Dollar Toolkit** to enable modules and configure each one.
 
 ## Local development
 
@@ -111,7 +113,7 @@ WP_PORT=8081 docker compose run --rm wpcli <wp-cli command without the leading "
 ./reset.sh                     # delete containers and volumes
 ```
 
-Site: `http://localhost:8081`, admin `admin` / `admin` (local only). Two must-use plugins in `dev/mu-plugins/` replace the outside world: `wtt-sms-mock.php` fakes the SMS APIs (and logs requests to `wp-content/sms.log`, including OTP codes, for development only), and `wtt-mail-log.php` writes outgoing mail to files instead of sending it. See [dev/README.md](dev/README.md).
+Site: `http://localhost:8081`, admin `admin` / `admin` (local only). Two must-use plugins in `dev/mu-plugins/` replace the outside world: `mdt-sms-mock.php` fakes the SMS APIs (and logs requests to `wp-content/sms.log`, including OTP codes, for development only), and `mdt-mail-log.php` writes outgoing mail to files instead of sending it. See [dev/README.md](dev/README.md).
 
 ## Tests
 
@@ -130,13 +132,13 @@ docker run --rm -v $PWD:/app -w /app php:7.4-cli vendor/bin/phpunit
 docker run --rm -v $PWD:/app -w /app php:8.3-cli vendor/bin/phpunit
 ```
 
-Current run: **153 tests, 3342 assertions**, passing on PHP 7.4 and PHP 8.3. They cover Jalali conversion (including Nowruz boundaries and the 1403 and 1408 leap years), Jalali date formatting and Persian digits, number-to-words, phone normalisation and validation, sender-line handling per provider, rate aggregation and effective rate, price calculation, the FarazSMS and IPPanel response handling (success, 401, 422, 5xx, network error), and the OTP code hashing, rate-limit counters and client-IP handling.
+Current run: **159 tests, 3367 assertions**, passing on PHP 7.4 and PHP 8.3. They cover Jalali conversion (including Nowruz boundaries and the 1403 and 1408 leap years), Jalali date formatting and Persian digits, number-to-words, phone normalisation and validation, sender-line handling per provider, rate aggregation and effective rate, price calculation, the FarazSMS and IPPanel response handling (success, 401, 422, 5xx, network error), the OTP code hashing, rate-limit counters and client-IP handling, and the legacy-migration prefix maps.
 
 Not covered by unit tests: anything that needs WordPress or WooCommerce at run time (checkout, order status flow, emails, admin screens, Action Scheduler batches, the OTP request and verify flow end to end). Those were exercised by hand in the Docker environment. CI runs `php -l` on every plugin file and the unit tests on PHP 7.4, 8.1 and 8.3, plus a `msgfmt -c` check of the translation.
 
 ## Translations
 
-The source language is English. A complete Persian translation is in `woo-toman-toolkit/languages/` (`woo-toman-toolkit-fa_IR.po` / `.mo`, plus the `.pot` template). Jalali dates, Persian digits and amounts in words are used when the site locale is `fa_*`.
+The source language is English. A complete Persian translation is in `mim-dollar-toolkit/languages/` (`mim-dollar-toolkit-fa_IR.po` / `.mo`, plus the `.pot` template). Jalali dates, Persian digits and amounts in words are used when the site locale is `fa_*`.
 
 ## License
 

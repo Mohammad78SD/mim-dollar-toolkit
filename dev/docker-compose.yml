@@ -1,4 +1,4 @@
-name: wtt-dev
+name: mdt-dev
 
 x-wp-env: &wp-env
   WORDPRESS_DB_HOST: db
@@ -34,7 +34,7 @@ services:
       <<: *wp-env
     volumes:
       - wp_data:/var/www/html
-      - ../woo-toman-toolkit:/var/www/html/wp-content/plugins/woo-toman-toolkit
+      - ../mim-dollar-toolkit:/var/www/html/wp-content/plugins/mim-dollar-toolkit
       - ./mu-plugins:/var/www/html/wp-content/mu-plugins
 
   wpcli:
@@ -47,7 +47,7 @@ services:
       HOME: /tmp
     volumes:
       - wp_data:/var/www/html
-      - ../woo-toman-toolkit:/var/www/html/wp-content/plugins/woo-toman-toolkit
+      - ../mim-dollar-toolkit:/var/www/html/wp-content/plugins/mim-dollar-toolkit
       - ./mu-plugins:/var/www/html/wp-content/mu-plugins
       - ./seed-products.php:/seed-products.php:ro
     entrypoint: ["wp"]

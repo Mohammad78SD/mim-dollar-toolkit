@@ -4,8 +4,8 @@ cd "$(dirname "$0")"
 
 export WP_PORT="${WP_PORT:-8080}"
 URL="http://localhost:$WP_PORT"
-PLUGIN_DIR="../woo-toman-toolkit"
-PLUGIN_SLUG="woo-toman-toolkit"
+PLUGIN_DIR="../mim-dollar-toolkit"
+PLUGIN_SLUG="mim-dollar-toolkit"
 wp() { docker compose --progress quiet run --rm -T wpcli "$@"; }
 opt() { wp option update "$@" >/dev/null 2>&1 || true; }  # update errors when value unchanged
 
@@ -25,7 +25,7 @@ done
 
 if ! wp core is-installed >/dev/null 2>&1; then
   echo "==> Installing WordPress"
-  wp core install --url="$URL" --title="Toman Toolkit Dev" --admin_user=admin \
+  wp core install --url="$URL" --title="MiM Dollar Toolkit Dev" --admin_user=admin \
     --admin_password=admin --admin_email=admin@example.com --skip-email
 else
   echo "==> WordPress already installed"
@@ -38,7 +38,7 @@ fi
 wp plugin is-active woocommerce >/dev/null 2>&1 || wp plugin activate woocommerce
 
 echo "==> Currency"
-if wp eval 'echo isset(get_woocommerce_currencies()["IRT"]) ? "WTT_YES" : "WTT_NO";' 2>/dev/null | grep -q WTT_YES; then
+if wp eval 'echo isset(get_woocommerce_currencies()["IRT"]) ? "MDT_YES" : "MDT_NO";' 2>/dev/null | grep -q MDT_YES; then
   opt woocommerce_currency IRT
   CURRENCY=IRT
 else

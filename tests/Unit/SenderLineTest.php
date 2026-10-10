@@ -2,7 +2,7 @@
 /**
  * Sender line normalisation: IPPanel Edge stores E.164, FarazSMS (IranPayamak) stores the digits shown in the panel.
  */
-class SenderLineTest extends WTT_TestCase {
+class SenderLineTest extends MDT_TestCase {
 
 	public function e164Provider() {
 		return array(
@@ -20,7 +20,7 @@ class SenderLineTest extends WTT_TestCase {
 
 	/** @dataProvider e164Provider */
 	public function test_ippanel_edge_sender_is_e164( $raw, $expected ) {
-		$this->assertSame( $expected, WTT_SMS_Phone::normalize_sender( $raw ) );
+		$this->assertSame( $expected, MDT_SMS_Phone::normalize_sender( $raw ) );
 	}
 
 	public function farazProvider() {
@@ -37,36 +37,36 @@ class SenderLineTest extends WTT_TestCase {
 
 	/** @dataProvider farazProvider */
 	public function test_farazsms_line_is_digits_only( $raw, $expected ) {
-		$this->assertSame( $expected, WTT_SMS_Provider_FarazSMS::format_line( $raw ) );
+		$this->assertSame( $expected, MDT_SMS_Provider_FarazSMS::format_line( $raw ) );
 	}
 
 	public function test_farazsms_recipient_format() {
-		$this->assertSame( '09123456789', WTT_SMS_Provider_FarazSMS::format_recipient( '+989123456789' ) );
-		$this->assertSame( '09123456789', WTT_SMS_Provider_FarazSMS::format_recipient( '9123456789' ) );
-		$this->assertSame( '09123456789', WTT_SMS_Provider_FarazSMS::format_recipient( '00989123456789' ) );
-		$this->assertSame( '09123456789', WTT_SMS_Provider_FarazSMS::format_recipient( '09123456789' ) );
+		$this->assertSame( '09123456789', MDT_SMS_Provider_FarazSMS::format_recipient( '+989123456789' ) );
+		$this->assertSame( '09123456789', MDT_SMS_Provider_FarazSMS::format_recipient( '9123456789' ) );
+		$this->assertSame( '09123456789', MDT_SMS_Provider_FarazSMS::format_recipient( '00989123456789' ) );
+		$this->assertSame( '09123456789', MDT_SMS_Provider_FarazSMS::format_recipient( '09123456789' ) );
 	}
 
 	public function test_settings_sanitize_stores_sender_per_provider() {
-		$faraz = WTT_SMS_Settings::sanitize( array( 'provider' => 'farazsms', 'sender' => '+9890008361' ), array() );
+		$faraz = MDT_SMS_Settings::sanitize( array( 'provider' => 'farazsms', 'sender' => '+9890008361' ), array() );
 		$this->assertSame( 'farazsms', $faraz['provider'] );
 		$this->assertSame( '90008361', $faraz['sender'] );
 
-		$faraz = WTT_SMS_Settings::sanitize( array( 'provider' => 'farazsms', 'sender' => '۹۰۰۰۸۳۶۱' ), array() );
+		$faraz = MDT_SMS_Settings::sanitize( array( 'provider' => 'farazsms', 'sender' => '۹۰۰۰۸۳۶۱' ), array() );
 		$this->assertSame( '90008361', $faraz['sender'] );
 
-		$edge = WTT_SMS_Settings::sanitize( array( 'provider' => 'ippanel_edge', 'sender' => '3000505' ), array() );
+		$edge = MDT_SMS_Settings::sanitize( array( 'provider' => 'ippanel_edge', 'sender' => '3000505' ), array() );
 		$this->assertSame( 'ippanel_edge', $edge['provider'] );
 		$this->assertSame( '+983000505', $edge['sender'] );
 
-		$unknown = WTT_SMS_Settings::sanitize( array( 'provider' => 'nope', 'sender' => '1' ), array() );
+		$unknown = MDT_SMS_Settings::sanitize( array( 'provider' => 'nope', 'sender' => '1' ), array() );
 		$this->assertSame( 'farazsms', $unknown['provider'] );
 	}
 
 	public function test_settings_sanitize_keeps_existing_api_key_when_blank() {
-		$out = WTT_SMS_Settings::sanitize( array( 'api_key' => '' ), array( 'api_key' => 'secret-key' ) );
+		$out = MDT_SMS_Settings::sanitize( array( 'api_key' => '' ), array( 'api_key' => 'secret-key' ) );
 		$this->assertSame( 'secret-key', $out['api_key'] );
-		$out = WTT_SMS_Settings::sanitize( array( 'api_key' => '', 'api_key_clear' => '1' ), array( 'api_key' => 'secret-key' ) );
+		$out = MDT_SMS_Settings::sanitize( array( 'api_key' => '', 'api_key_clear' => '1' ), array( 'api_key' => 'secret-key' ) );
 		$this->assertSame( '', $out['api_key'] );
 	}
 }

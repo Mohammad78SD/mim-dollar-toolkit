@@ -1,0 +1,14 @@
+.mdt-acc-otp{max-width:420px;margin:0 0 1.5em;padding:1.2em 1.4em;border:1px solid rgba(0,0,0,.15);border-radius:6px}
+.mdt-acc-otp[hidden],.mdt-acc-step[hidden],.mdt-acc-pw-toggle-wrap[hidden]{display:none}
+.mdt-acc-otp h2{margin-top:0}
+.mdt-acc-otp input[type=tel],.mdt-acc-otp input[type=text]{width:100%;box-sizing:border-box;text-align:left;direction:ltr}
+.mdt-acc-otp input[type=text]{letter-spacing:.3em;font-size:1.2em}
+.mdt-acc-msg{min-height:1.4em;margin:.4em 0}
+.mdt-acc-msg.is-error{color:#b32d2e}
+.mdt-acc-msg.is-ok{color:#1a7f37}
+.mdt-acc-link{background:none;border:0;padding:0;margin-inline-end:1em;color:inherit;text-decoration:underline;cursor:pointer;font:inherit}
+.mdt-acc-link[disabled]{opacity:.55;cursor:default;text-decoration:none}
+.mdt-acc-hide-pw{display:none!important}
+.mdt-acc-pw-toggle-wrap{margin:0 0 1em}
+.mdt-acc-otp .mdt-acc-send,.mdt-acc-otp .mdt-acc-verify{min-height:44px;width:100%;box-sizing:border-box;cursor:pointer}
+.mdt-acc-otp .mdt-acc-send[disabled],.mdt-acc-otp .mdt-acc-verify[disabled]{opacity:.6;cursor:default}

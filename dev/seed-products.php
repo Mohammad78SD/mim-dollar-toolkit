@@ -1,10 +1,10 @@
 <?php
 // Idempotent sample product seeding. Run via: wp eval-file /seed-products.php
-function wtt_seed_exists( $sku ) {
+function mdt_seed_exists( $sku ) {
 	return (bool) wc_get_product_id_by_sku( $sku );
 }
-function wtt_seed_simple( $sku, $name, $regular, $meta = array() ) {
-	if ( wtt_seed_exists( $sku ) ) { echo "  exists: $name\n"; return; }
+function mdt_seed_simple( $sku, $name, $regular, $meta = array() ) {
+	if ( mdt_seed_exists( $sku ) ) { echo "  exists: $name\n"; return; }
 	$p = new WC_Product_Simple();
 	$p->set_name( $name );
 	$p->set_sku( $sku );
@@ -14,25 +14,25 @@ function wtt_seed_simple( $sku, $name, $regular, $meta = array() ) {
 	$p->save();
 	echo "  created: $name (#{$p->get_id()})\n";
 }
-wtt_seed_simple( 'WTT-USD-1', 'USD Product A', 1000000, array( '_wtt_usd_regular_price' => '100' ) );
+mdt_seed_simple( 'MDT-USD-1', 'USD Product A', 1000000, array( '_mdt_usd_regular_price' => '100' ) );
 // Product A: managed stock, qty 1 (pre-invoice stock reservation tests). Idempotent: only set once.
-$wtt_a = wc_get_product( wc_get_product_id_by_sku( 'WTT-USD-1' ) );
-if ( $wtt_a && ! $wtt_a->get_manage_stock() ) {
-	$wtt_a->set_manage_stock( true );
-	$wtt_a->set_stock_quantity( 1 );
-	$wtt_a->set_stock_status( 'instock' );
-	$wtt_a->save();
+$mdt_a = wc_get_product( wc_get_product_id_by_sku( 'MDT-USD-1' ) );
+if ( $mdt_a && ! $mdt_a->get_manage_stock() ) {
+	$mdt_a->set_manage_stock( true );
+	$mdt_a->set_stock_quantity( 1 );
+	$mdt_a->set_stock_status( 'instock' );
+	$mdt_a->save();
 	echo "  stock: USD Product A managed, qty 1\n";
 }
-wtt_seed_simple( 'WTT-USD-2', 'USD Product B (sale)', 2500000, array( '_wtt_usd_regular_price' => '250.5', '_wtt_usd_sale_price' => '90' ) );
-wtt_seed_simple( 'WTT-TOMAN', 'Toman Only Product', 5000000 );
+mdt_seed_simple( 'MDT-USD-2', 'USD Product B (sale)', 2500000, array( '_mdt_usd_regular_price' => '250.5', '_mdt_usd_sale_price' => '90' ) );
+mdt_seed_simple( 'MDT-TOMAN', 'Toman Only Product', 5000000 );
 
-if ( wtt_seed_exists( 'WTT-CARPET' ) ) {
+if ( mdt_seed_exists( 'MDT-CARPET' ) ) {
 	echo "  exists: Carpet Variable\n";
 } else {
 	$p = new WC_Product_Variable();
 	$p->set_name( 'Carpet Variable' );
-	$p->set_sku( 'WTT-CARPET' );
+	$p->set_sku( 'MDT-CARPET' );
 	$p->set_status( 'publish' );
 	$attr = new WC_Product_Attribute();
 	$attr->set_name( 'size' );
@@ -47,7 +47,7 @@ if ( wtt_seed_exists( 'WTT-CARPET' ) ) {
 		$var->set_parent_id( $id );
 		$var->set_attributes( array( 'size' => $size ) );
 		$var->set_regular_price( $v[1] );
-		$var->update_meta_data( '_wtt_usd_regular_price', (string) $v[0] );
+		$var->update_meta_data( '_mdt_usd_regular_price', (string) $v[0] );
 		$var->set_status( 'publish' );
 		$var->save();
 	}

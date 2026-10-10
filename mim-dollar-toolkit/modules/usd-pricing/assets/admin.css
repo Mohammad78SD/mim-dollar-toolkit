@@ -1,0 +1,9 @@
+.mdt-usd-hint-wrap .mdt-usd-hint { display: none; color: #2271b1; }
+.mdt-usd-hint-wrap.mdt-usd-active .mdt-usd-hint { display: inline; }
+.mdt-usd-locked { background: #f0f0f1 !important; cursor: not-allowed; }
+.column-mdt_usd { width: 9ch; }
+.mdt-usd-status td, .mdt-usd-status th { padding: 6px 10px; }
+.mdt-usd-level-error { color: #b32d2e; font-weight: 600; }
+.mdt-usd-level-warning { color: #996800; font-weight: 600; }
+.mdt-usd-actions form { display: inline-block; margin-right: 6px; }
+.mdt-usd-notice form { display: inline-block; margin: 0 8px 0 0; }

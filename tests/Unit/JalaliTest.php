@@ -1,6 +1,6 @@
 <?php
 
-class JalaliTest extends WTT_TestCase {
+class JalaliTest extends MDT_TestCase {
 
 	public function conversionProvider() {
 		return array(
@@ -23,7 +23,7 @@ class JalaliTest extends WTT_TestCase {
 
 	/** @dataProvider conversionProvider */
 	public function test_gregorian_to_jalali( $gy, $gm, $gd, $expected ) {
-		$this->assertSame( $expected, wtt_gregorian_to_jalali( $gy, $gm, $gd ) );
+		$this->assertSame( $expected, mdt_gregorian_to_jalali( $gy, $gm, $gd ) );
 	}
 
 	public function test_conversion_is_consecutive_across_five_years() {
@@ -34,7 +34,7 @@ class JalaliTest extends WTT_TestCase {
 		$end   = gmmktime( 12, 0, 0, 12, 31, 2030 );
 		$leaps = array();
 		for ( ; $t <= $end; $t += 86400 ) {
-			$cur = wtt_gregorian_to_jalali( (int) gmdate( 'Y', $t ), (int) gmdate( 'n', $t ), (int) gmdate( 'j', $t ) );
+			$cur = mdt_gregorian_to_jalali( (int) gmdate( 'Y', $t ), (int) gmdate( 'n', $t ), (int) gmdate( 'j', $t ) );
 			if ( $prev ) {
 				list( $py, $pm, $pd ) = $prev;
 				list( $cy, $cm, $cd ) = $cur;
@@ -63,7 +63,7 @@ class JalaliTest extends WTT_TestCase {
 	}
 
 	public function test_month_names() {
-		$names = wtt_jalali_month_names();
+		$names = mdt_jalali_month_names();
 		$this->assertCount( 12, $names );
 		$this->assertSame( 'فروردین', $names[1] );
 		$this->assertSame( 'اسفند', $names[12] );
@@ -71,38 +71,38 @@ class JalaliTest extends WTT_TestCase {
 
 	public function test_jdate_default_format_and_padding() {
 		// 2024-03-20 00:00 UTC.
-		$this->assertSame( '1403/01/01', wtt_jdate( 'Y/m/d', gmmktime( 0, 0, 0, 3, 20, 2024 ) ) );
-		$this->assertSame( '03/1/1', wtt_jdate( 'y/n/j', gmmktime( 0, 0, 0, 3, 20, 2024 ) ) );
+		$this->assertSame( '1403/01/01', mdt_jdate( 'Y/m/d', gmmktime( 0, 0, 0, 3, 20, 2024 ) ) );
+		$this->assertSame( '03/1/1', mdt_jdate( 'y/n/j', gmmktime( 0, 0, 0, 3, 20, 2024 ) ) );
 	}
 
 	public function test_jdate_names_time_and_escaping() {
 		$ts = gmmktime( 14, 5, 9, 3, 20, 2024 ); // a Wednesday.
-		$this->assertSame( '1 فروردین 1403', wtt_jdate( 'j F Y', $ts ) );
-		$this->assertSame( 'چهارشنبه', wtt_jdate( 'l', $ts ) );
-		$this->assertSame( '14:05:09', wtt_jdate( 'H:i:s', $ts ) );
-		$this->assertSame( 'Y 1403', wtt_jdate( '\Y Y', $ts ) );
+		$this->assertSame( '1 فروردین 1403', mdt_jdate( 'j F Y', $ts ) );
+		$this->assertSame( 'چهارشنبه', mdt_jdate( 'l', $ts ) );
+		$this->assertSame( '14:05:09', mdt_jdate( 'H:i:s', $ts ) );
+		$this->assertSame( 'Y 1403', mdt_jdate( '\Y Y', $ts ) );
 	}
 
 	public function test_jdate_uses_site_timezone() {
 		// 2024-03-19 21:00 UTC is 00:30 on 20 March in Tehran (UTC+3:30, no DST since 2022).
 		$ts = gmmktime( 21, 0, 0, 3, 19, 2024 );
-		$this->assertSame( '1402/12/29', wtt_jdate( 'Y/m/d', $ts ) );
-		$GLOBALS['wtt_test']['tz'] = 'Asia/Tehran';
-		$this->assertSame( '1403/01/01 00:30', wtt_jdate( 'Y/m/d H:i', $ts ) );
+		$this->assertSame( '1402/12/29', mdt_jdate( 'Y/m/d', $ts ) );
+		$GLOBALS['mdt_test']['tz'] = 'Asia/Tehran';
+		$this->assertSame( '1403/01/01 00:30', mdt_jdate( 'Y/m/d H:i', $ts ) );
 	}
 
 	public function test_fa_digits() {
-		$this->assertSame( '۱۴۰۳/۰۱/۰۱', wtt_fa_digits( '1403/01/01' ) );
-		$this->assertSame( '۰۱۲۳۴۵۶۷۸۹', wtt_fa_digits( '0123456789' ) );
-		$this->assertSame( '۱۲۳٫۵', wtt_fa_digits( '123٫5' ), 'non-digits pass through' );
-		$this->assertSame( '۴۲', wtt_fa_digits( 42 ) );
-		$this->assertSame( '', wtt_fa_digits( '' ) );
-		$this->assertSame( 'abc ۱', wtt_fa_digits( 'abc 1' ) );
+		$this->assertSame( '۱۴۰۳/۰۱/۰۱', mdt_fa_digits( '1403/01/01' ) );
+		$this->assertSame( '۰۱۲۳۴۵۶۷۸۹', mdt_fa_digits( '0123456789' ) );
+		$this->assertSame( '۱۲۳٫۵', mdt_fa_digits( '123٫5' ), 'non-digits pass through' );
+		$this->assertSame( '۴۲', mdt_fa_digits( 42 ) );
+		$this->assertSame( '', mdt_fa_digits( '' ) );
+		$this->assertSame( 'abc ۱', mdt_fa_digits( 'abc 1' ) );
 	}
 
 	public function test_is_fa_locale() {
-		$this->assertFalse( wtt_is_fa_locale() );
-		$GLOBALS['wtt_test']['locale'] = 'fa_IR';
-		$this->assertTrue( wtt_is_fa_locale() );
+		$this->assertFalse( mdt_is_fa_locale() );
+		$GLOBALS['mdt_test']['locale'] = 'fa_IR';
+		$this->assertTrue( mdt_is_fa_locale() );
 	}
 }

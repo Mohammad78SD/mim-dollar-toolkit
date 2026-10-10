@@ -1,5 +1,5 @@
 <?php
-class NumberWordsTest extends WTT_TestCase {
+class NumberWordsTest extends MDT_TestCase {
 
 	public function wordsProvider() {
 		return array(
@@ -34,10 +34,10 @@ class NumberWordsTest extends WTT_TestCase {
 
 	/** @dataProvider wordsProvider */
 	public function test_number_to_words( $input, $expected ) {
-		$this->assertSame( $expected, wtt_number_to_fa_words( $input ) );
+		$this->assertSame( $expected, mdt_number_to_fa_words( $input ) );
 	}
 
 	public function test_float_input_is_truncated_to_int() {
-		$this->assertSame( 'دوازده', wtt_number_to_fa_words( 12.9 ) );
+		$this->assertSame( 'دوازده', mdt_number_to_fa_words( 12.9 ) );
 	}
 }

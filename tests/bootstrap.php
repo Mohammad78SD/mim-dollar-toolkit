@@ -5,16 +5,16 @@
  */
 
 define( 'ABSPATH', __DIR__ . '/' );
-define( 'WTT_TK_DIR', dirname( __DIR__ ) . '/woo-toman-toolkit/' );
-define( 'WTT_USD_VERSION', 'test' );
+define( 'MDT_TK_DIR', dirname( __DIR__ ) . '/mim-dollar-toolkit/' );
+define( 'MDT_USD_VERSION', 'test' );
 define( 'HOUR_IN_SECONDS', 3600 );
 define( 'MINUTE_IN_SECONDS', 60 );
 
-/* ---- in-memory state, reset by WTT_TestCase::setUp() ---- */
-$GLOBALS['wtt_test'] = array();
+/* ---- in-memory state, reset by MDT_TestCase::setUp() ---- */
+$GLOBALS['mdt_test'] = array();
 
-function wtt_test_reset() {
-	$GLOBALS['wtt_test'] = array(
+function mdt_test_reset() {
+	$GLOBALS['mdt_test'] = array(
 		'options'    => array(),
 		'transients' => array(),
 		'http'       => null,      // callable( $url, $args ) returning a response array or WP_Error.
@@ -24,7 +24,7 @@ function wtt_test_reset() {
 		'locale'     => 'en_US',
 	);
 }
-wtt_test_reset();
+mdt_test_reset();
 
 /* ---- i18n / escaping ---- */
 function __( $text ) { return $text; }
@@ -50,23 +50,23 @@ function add_filter() {}
 
 /* ---- options & transients (array backed, no expiry bookkeeping beyond what tests need) ---- */
 function get_option( $name, $default = false ) {
-	return array_key_exists( $name, $GLOBALS['wtt_test']['options'] ) ? $GLOBALS['wtt_test']['options'][ $name ] : $default;
+	return array_key_exists( $name, $GLOBALS['mdt_test']['options'] ) ? $GLOBALS['mdt_test']['options'][ $name ] : $default;
 }
-function update_option( $name, $value ) { $GLOBALS['wtt_test']['options'][ $name ] = $value; return true; }
+function update_option( $name, $value ) { $GLOBALS['mdt_test']['options'][ $name ] = $value; return true; }
 function add_option( $name, $value ) { return update_option( $name, $value ); }
-function delete_option( $name ) { unset( $GLOBALS['wtt_test']['options'][ $name ] ); return true; }
+function delete_option( $name ) { unset( $GLOBALS['mdt_test']['options'][ $name ] ); return true; }
 function get_transient( $name ) {
-	return array_key_exists( $name, $GLOBALS['wtt_test']['transients'] ) ? $GLOBALS['wtt_test']['transients'][ $name ] : false;
+	return array_key_exists( $name, $GLOBALS['mdt_test']['transients'] ) ? $GLOBALS['mdt_test']['transients'][ $name ] : false;
 }
-function set_transient( $name, $value ) { $GLOBALS['wtt_test']['transients'][ $name ] = $value; return true; }
-function delete_transient( $name ) { unset( $GLOBALS['wtt_test']['transients'][ $name ] ); return true; }
+function set_transient( $name, $value ) { $GLOBALS['mdt_test']['transients'][ $name ] = $value; return true; }
+function delete_transient( $name ) { unset( $GLOBALS['mdt_test']['transients'][ $name ] ); return true; }
 
 /* ---- WooCommerce / locale / time ---- */
-function get_woocommerce_currency() { return $GLOBALS['wtt_test']['currency']; }
-function get_locale() { return $GLOBALS['wtt_test']['locale']; }
+function get_woocommerce_currency() { return $GLOBALS['mdt_test']['currency']; }
+function get_locale() { return $GLOBALS['mdt_test']['locale']; }
 function wp_date( $format, $timestamp = null ) {
 	$dt = new DateTime( '@' . (int) $timestamp );
-	$dt->setTimezone( new DateTimeZone( $GLOBALS['wtt_test']['tz'] ) );
+	$dt->setTimezone( new DateTimeZone( $GLOBALS['mdt_test']['tz'] ) );
 	return $dt->format( $format );
 }
 
@@ -79,42 +79,42 @@ class WP_Error {
 	public function get_error_message() { return $this->message; }
 }
 function is_wp_error( $thing ) { return $thing instanceof WP_Error; }
-function wtt_test_http( $url, $args ) {
-	$GLOBALS['wtt_test']['http_calls'][] = array( 'url' => $url, 'args' => $args );
-	return call_user_func( $GLOBALS['wtt_test']['http'], $url, $args );
+function mdt_test_http( $url, $args ) {
+	$GLOBALS['mdt_test']['http_calls'][] = array( 'url' => $url, 'args' => $args );
+	return call_user_func( $GLOBALS['mdt_test']['http'], $url, $args );
 }
-function wp_remote_post( $url, $args = array() ) { return wtt_test_http( $url, $args ); }
-function wp_remote_request( $url, $args = array() ) { return wtt_test_http( $url, $args ); }
+function wp_remote_post( $url, $args = array() ) { return mdt_test_http( $url, $args ); }
+function wp_remote_request( $url, $args = array() ) { return mdt_test_http( $url, $args ); }
 function wp_remote_retrieve_response_code( $r ) { return isset( $r['response']['code'] ) ? $r['response']['code'] : ''; }
 function wp_remote_retrieve_body( $r ) { return isset( $r['body'] ) ? $r['body'] : ''; }
 
 /* ---- code under test (only files that are safe to load without WordPress) ---- */
-require_once WTT_TK_DIR . 'includes/helpers-jalali.php';
-require_once WTT_TK_DIR . 'includes/helpers-fa.php';
-require_once WTT_TK_DIR . 'includes/class-logger.php';
-require_once WTT_TK_DIR . 'modules/usd-pricing/includes/class-logger.php';
-require_once WTT_TK_DIR . 'modules/usd-pricing/includes/class-settings.php';
-require_once WTT_TK_DIR . 'modules/usd-pricing/includes/class-rate-manager.php';
-require_once WTT_TK_DIR . 'modules/usd-pricing/includes/class-price-sync.php';
-require_once WTT_TK_DIR . 'modules/sms/includes/class-phone.php';
-require_once WTT_TK_DIR . 'modules/sms/includes/class-provider.php';
-require_once WTT_TK_DIR . 'modules/sms/includes/class-provider-farazsms.php';
-require_once WTT_TK_DIR . 'modules/sms/includes/class-provider-ippanel-edge.php';
-require_once WTT_TK_DIR . 'modules/sms/includes/class-events.php';
-require_once WTT_TK_DIR . 'modules/sms/includes/class-settings.php';
-require_once WTT_TK_DIR . 'modules/accounts/includes/class-settings.php';
-require_once WTT_TK_DIR . 'modules/accounts/includes/class-limiter.php';
-require_once WTT_TK_DIR . 'modules/accounts/includes/class-otp.php';
+require_once MDT_TK_DIR . 'includes/helpers-jalali.php';
+require_once MDT_TK_DIR . 'includes/helpers-fa.php';
+require_once MDT_TK_DIR . 'includes/class-logger.php';
+require_once MDT_TK_DIR . 'modules/usd-pricing/includes/class-logger.php';
+require_once MDT_TK_DIR . 'modules/usd-pricing/includes/class-settings.php';
+require_once MDT_TK_DIR . 'modules/usd-pricing/includes/class-rate-manager.php';
+require_once MDT_TK_DIR . 'modules/usd-pricing/includes/class-price-sync.php';
+require_once MDT_TK_DIR . 'modules/sms/includes/class-phone.php';
+require_once MDT_TK_DIR . 'modules/sms/includes/class-provider.php';
+require_once MDT_TK_DIR . 'modules/sms/includes/class-provider-farazsms.php';
+require_once MDT_TK_DIR . 'modules/sms/includes/class-provider-ippanel-edge.php';
+require_once MDT_TK_DIR . 'modules/sms/includes/class-events.php';
+require_once MDT_TK_DIR . 'modules/sms/includes/class-settings.php';
+require_once MDT_TK_DIR . 'modules/accounts/includes/class-settings.php';
+require_once MDT_TK_DIR . 'modules/accounts/includes/class-limiter.php';
+require_once MDT_TK_DIR . 'modules/accounts/includes/class-otp.php';
 
-abstract class WTT_TestCase extends \PHPUnit\Framework\TestCase {
+abstract class MDT_TestCase extends \PHPUnit\Framework\TestCase {
 	protected function setUp(): void {
-		wtt_test_reset();
+		mdt_test_reset();
 		parent::setUp();
 	}
 
 	/** Set the HTTP stub: a fixed response array or a callable. */
 	protected function http( $response ) {
-		$GLOBALS['wtt_test']['http'] = is_callable( $response ) ? $response : function () use ( $response ) {
+		$GLOBALS['mdt_test']['http'] = is_callable( $response ) ? $response : function () use ( $response ) {
 			return $response;
 		};
 	}

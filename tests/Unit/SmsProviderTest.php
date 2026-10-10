@@ -1,12 +1,12 @@
 <?php
-class SmsProviderTest extends WTT_TestCase {
+class SmsProviderTest extends MDT_TestCase {
 
 	private function faraz() {
-		return new WTT_SMS_Provider_FarazSMS( array( 'api_key' => 'k-123', 'sender' => '+9890008361' ) );
+		return new MDT_SMS_Provider_FarazSMS( array( 'api_key' => 'k-123', 'sender' => '+9890008361' ) );
 	}
 
 	private function edge() {
-		return new WTT_SMS_Provider_IPPanel_Edge( array( 'api_key' => 'k-123', 'sender' => '+983000505' ) );
+		return new MDT_SMS_Provider_IPPanel_Edge( array( 'api_key' => 'k-123', 'sender' => '+983000505' ) );
 	}
 
 	/* ---- FarazSMS (IranPayamak) ---- */
@@ -23,7 +23,7 @@ class SmsProviderTest extends WTT_TestCase {
 	public function test_faraz_request_shape() {
 		$this->http( self::resp( 200, array( 'status' => 'success', 'data' => 1 ) ) );
 		$this->faraz()->send_pattern( '+989123456789', 'abc123', array( 'code' => 12345 ) );
-		$call = $GLOBALS['wtt_test']['http_calls'][0];
+		$call = $GLOBALS['mdt_test']['http_calls'][0];
 		$this->assertSame( 'https://api.iranpayamak.com/ws/v1/sms/pattern', $call['url'] );
 		$this->assertSame( 'POST', $call['args']['method'] );
 		$this->assertSame( 'k-123', $call['args']['headers']['Api-Key'] );
@@ -146,7 +146,7 @@ class SmsProviderTest extends WTT_TestCase {
 		$r = $this->edge()->send_pattern( '+989123456789', 'c', array( 'code' => '1' ) );
 		$this->assertTrue( $r['ok'] );
 		$this->assertSame( '555', $r['id'] );
-		$call = $GLOBALS['wtt_test']['http_calls'][0];
+		$call = $GLOBALS['mdt_test']['http_calls'][0];
 		$this->assertSame( 'k-123', $call['args']['headers']['Authorization'] );
 		$body = json_decode( $call['args']['body'], true );
 		$this->assertSame( '+983000505', $body['from_number'] );

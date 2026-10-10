@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")"
-SLUG="woo-toman-toolkit"
+SLUG="mim-dollar-toolkit"
 [ -d "$SLUG" ] || { echo "Missing $SLUG/" >&2; exit 1; }
 mkdir -p dist
 rm -f "dist/$SLUG.zip"

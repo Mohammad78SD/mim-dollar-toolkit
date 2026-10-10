@@ -1,9 +1,0 @@
-.wtt-usd-hint-wrap .wtt-usd-hint { display: none; color: #2271b1; }
-.wtt-usd-hint-wrap.wtt-usd-active .wtt-usd-hint { display: inline; }
-.wtt-usd-locked { background: #f0f0f1 !important; cursor: not-allowed; }
-.column-wtt_usd { width: 9ch; }
-.wtt-usd-status td, .wtt-usd-status th { padding: 6px 10px; }
-.wtt-usd-level-error { color: #b32d2e; font-weight: 600; }
-.wtt-usd-level-warning { color: #996800; font-weight: 600; }
-.wtt-usd-actions form { display: inline-block; margin-right: 6px; }
-.wtt-usd-notice form { display: inline-block; margin: 0 8px 0 0; }

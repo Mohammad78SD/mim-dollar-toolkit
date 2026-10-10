@@ -29,7 +29,7 @@ jobs:
           status=0
           while IFS= read -r -d '' f; do
             php -l "$f" > /dev/null || status=1
-          done < <(find woo-toman-toolkit -name '*.php' -print0)
+          done < <(find mim-dollar-toolkit -name '*.php' -print0)
           exit $status
 
       - name: Check translations (msgfmt)
@@ -37,7 +37,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq gettext
-          msgfmt -c -o /dev/null woo-toman-toolkit/languages/woo-toman-toolkit-fa_IR.po
+          msgfmt -c -o /dev/null mim-dollar-toolkit/languages/mim-dollar-toolkit-fa_IR.po
 
   test:
     name: PHPUnit (PHP ${{ matrix.php }})
